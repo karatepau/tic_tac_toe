@@ -1,7 +1,9 @@
 SECTION .data
-    msg_vic_x  db "X has won!", 10
-    msg_vic_o  db "O has won!", 10
+    msg_vic_x db "X has won!", 10
+    msg_vic_o db "O has won!", 10
     len_vic  equ $ - msg_vic_o
+    msg_draw db "It's a draw", 10
+    len_draw equ $ - msg_draw
 
 SECTION .bss
     print_buffer resb 32
@@ -47,7 +49,7 @@ vic:
     xor r8d, 16
     mov ecx, r8d
     shr eax, cl
-    
+        
     mov edx, eax
     and edx, 7
     cmp edx, 7
@@ -87,7 +89,20 @@ vic:
     and edx, 84
     cmp edx, 84
     je won
-
+    
+    mov edx, ebx
+    shr edx, 16
+    or edx, ebx
+    and edx, 0x1ff
+    cmp edx, 0x1ff
+    jne v0
+   
+    mov rax, 1
+    mov rdx, len_draw
+    mov rdi, 1
+    mov rsi, msg_draw
+    syscall
+    
     v0:
     mov rcx, 0
     xor r8d, 16
